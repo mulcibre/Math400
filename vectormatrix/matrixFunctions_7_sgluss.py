@@ -9,7 +9,7 @@ Assignment completed 2/4/2016 by Samuel Gluss
 #######  START Administrivia 
 m400group = 7   # change this to your group number
 
-m400names = ['Samuel Gluss', 'student 2'] # change this for your names
+m400names = ['*Samuel Gluss', 'Emily Conway', 'Jose Ortiz Costa', 'Abdelmajid Samir', 'Edward Yao'] # change this for your names
 
 def printNames():
     print("matrixFunctions.py for group %s:"%(m400group)),
