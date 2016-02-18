@@ -48,12 +48,13 @@ testMat =  [[1.,1.,1.,6.],
 testMatDesiredResult = [[1,0,0,5],
                         [0,1,0,3],
                         [0,0,1,-2]]
-                        
-identityMat =  [[1,1,1,6],
-                [0,2,5,-4],
-                [2,5,-1,27]]
+       
+#   Source augmented matrix for homework part 2       
+part2Mat =  [[1.000,1.000,1.000,0.001,3.0],
+             [1.000,0.001,0.001,0.001,1.0],
+             [1.000,1.000,0.001,0.001,2.0],
+             [10.00,10.00,10.00,math.pow(10,17),math.pow(10,17)]]
                 
-
 def testRowOps():
     print("Matrix")
     showMatrix(testMat)
