@@ -2,6 +2,12 @@
 #import pdb; pdb.set_trace()
 import math
 
+def tellUserHowToPivotStrategy():
+    print("Please enter valid pivot strategy")
+    print("0 -- Naive Gaussian")
+    print("1 -- Partial Pivoting")
+    print("2 -- Scaled Pivoting")
+
 def GetRow(mat, row):
     #return row from matrix mat
     retVec=[mat[row][j] for j in range(len(mat[0]))]
@@ -14,15 +20,29 @@ def swapRows(mat, row1, row2):
     mat[row2] = GetRow(mat, row1)
     mat[row1] = temp
     
-def getBestPartialPivot(mat, pivotCol):
+def getPivotValue(mat, rowIndex, colIndex, pivotStrategy):
+    #   return pivot value, or scaled pivot value depending on strategy
+    if pivotStrategy == 1:
+        #   return just the pivot column element for partial pivoting
+        return(mat[rowIndex][colIndex])
+    if pivotStrategy == 2:
+        #   return the pivot col value, normalized by all the elements in the row
+        #   (except of course the final solution element)
+        return(mat[rowIndex][colIndex] / sum(mat[rowIndex]) - mat[rowIndex][-1])
+    else:
+        print("invalid pivoting strategy")
+
+def getBestPivot(mat, pivotCol, pivotStrategy):
     #   set initial values for the pivot row, and pivot value
-    maxPivotValue = mat[pivotCol][pivotCol]
+    maxPivotValue = getPivotValue(mat, pivotCol, pivotCol, pivotStrategy)
     maxPivotRow = pivotCol
     #   Check the rest of the rows for a higher pivot value
     for i in range(pivotCol + 1, len(mat)):
-        if mat[i][pivotCol] > maxPivotValue:
+        #   get scaled, or partial pivot value, depending on strategy
+        newPivotValue = getPivotValue(mat, i, pivotCol, pivotStrategy)
+        if newPivotValue > maxPivotValue:
             #   set new max
-            maxPivotValue = mat[i][pivotCol]
+            maxPivotValue = newPivotValue
             maxPivotRow = i
     #   now the new max pivot row can be swapped in, if there is one
     if maxPivotRow != pivotCol:
@@ -34,7 +54,7 @@ def setBestPivotRow(mat, pivotColIndex, pivotStrategy):
         return
     if pivotStrategy == 1:
         #   partial pivoting
-        getBestPartialPivot(mat, pivotColIndex)
+        getBestPivot(mat, pivotColIndex, pivotStrategy)
         return
     if pivotStrategy == 2:
         #   scaled pivoting
@@ -64,6 +84,9 @@ def setPivotToOne(col, pivotRow):
     return(pivotRow)
        
 def solveMatrix(mat, pivotStrategy):
+    if pivotStrategy != 1 and pivotStrategy != 2 and pivotStrategy != 3:
+        tellUserHowToPivotStrategy()
+
     #    for each row in the matrix
     for i in range(len(mat)):
         #   0: no pivot strategy
@@ -100,26 +123,26 @@ part2Mat =  [[1.000,1.000,1.000,0.001,3.0],
              [10.00,10.00,10.00,math.pow(10,17),math.pow(10,17)]]
                 
 def testRowOps():
-    print("Matrix")
+    print("\nMatrix")
     showMatrix(testMat)
-    print("After row 3 has pivot1 removed")
+    print("\nAfter row 3 has pivot1 removed")
     testMat[2] = removePivotValueFromRow(0, testMat[0], testMat[2])
     showMatrix(testMat)
     
 def testMatrix():
     print("Matrix")
-    showMatrix(testMat)
+    showMatrix(part2Mat)
     print("solved matrix")
-    showMatrix(solveMatrix(testMat, 1))
+    showMatrix(solveMatrix(part2Mat, 2))
     
 def testPivotOps():
-    print("Matrix for part 2:")
+    print("\nMatrix for part 2:")
     showMatrix(part2Mat)
-    print("row 1 and 3 swapped:")
+    print("\nRow 1 and 3 swapped:")
     swapRows(part2Mat,0,2)
     showMatrix(part2Mat)
-    print("get best row for pivot 1 by partial pivoting:")
-    setBestPivotRow(part2Mat, 0, 1)
+    print("\nGet best row for pivot 1 by partial pivoting:")
+    setBestPivotRow(part2Mat, 0, 0)
     showMatrix(part2Mat)
     
 #testRowOps()
