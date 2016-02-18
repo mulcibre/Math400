@@ -1,5 +1,5 @@
 #   uncomment the line below to enable debug mode
-#import pdb; pdb.set_trace()
+import pdb; pdb.set_trace()
 import math
 
 def tellUserHowToPivotStrategy():
@@ -22,13 +22,15 @@ def swapRows(mat, row1, row2):
     
 def getPivotValue(mat, rowIndex, colIndex, pivotStrategy):
     #   return pivot value, or scaled pivot value depending on strategy
+    numerator = abs(mat[rowIndex][colIndex])
     if pivotStrategy == 1:
         #   return just the pivot column element for partial pivoting
-        return(mat[rowIndex][colIndex])
+        return(numerator)
     if pivotStrategy == 2:
         #   return the pivot col value, normalized by all the elements in the row
         #   (except of course the final solution element)
-        return(mat[rowIndex][colIndex] / sum(mat[rowIndex]) - mat[rowIndex][-1])
+        denominator = sum(abs(i) for i in mat[rowIndex]) - abs(mat[rowIndex][-1])
+        return(numerator / denominator)
     else:
         print("invalid pivoting strategy")
 
@@ -84,8 +86,9 @@ def setPivotToOne(col, pivotRow):
     return(pivotRow)
        
 def solveMatrix(mat, pivotStrategy):
-    if pivotStrategy != 1 and pivotStrategy != 2 and pivotStrategy != 3:
+    if pivotStrategy != 0 and pivotStrategy != 1 and pivotStrategy != 2:
         tellUserHowToPivotStrategy()
+        sys.exit(1)
 
     #    for each row in the matrix
     for i in range(len(mat)):
@@ -133,7 +136,7 @@ def testMatrix():
     print("Matrix")
     showMatrix(part2Mat)
     print("solved matrix")
-    showMatrix(solveMatrix(part2Mat, 2))
+    showMatrix(solveMatrix(part2Mat, 0))
     
 def testPivotOps():
     print("\nMatrix for part 2:")
