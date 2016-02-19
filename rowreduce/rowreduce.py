@@ -54,12 +54,9 @@ def setBestPivotRow(mat, pivotColIndex, pivotStrategy):
     if pivotStrategy == 0:
         #   no strategy
         return
-    if pivotStrategy == 1:
-        #   partial pivoting
+    else:
+        #   partial or scaled pivoting
         getBestPivot(mat, pivotColIndex, pivotStrategy)
-        return
-    if pivotStrategy == 2:
-        #   scaled pivoting
         return
     
 def showMatrix(mat):
@@ -136,7 +133,7 @@ def testMatrix():
     print("Matrix")
     showMatrix(part2Mat)
     print("solved matrix")
-    showMatrix(solveMatrix(part2Mat, 0))
+    showMatrix(solveMatrix(part2Mat, 2))
     
 def testPivotOps():
     print("\nMatrix for part 2:")
