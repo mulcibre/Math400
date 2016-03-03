@@ -1,5 +1,5 @@
 #   uncomment the line below to enable debug mode
-import pdb; pdb.set_trace()
+#import pdb; pdb.set_trace()
 import math
 
 def tellUserHowToPivotStrategy():
@@ -13,6 +13,37 @@ def GetRow(mat, row):
     retVec=[mat[row][j] for j in range(len(mat[0]))]
     return(retVec)
 
+def GetCol(mat, col):
+    "return column col from matrix mat"
+    retVec=[mat[j][col] for j in range(len(mat))]
+    return(retVec)
+    
+def SubtractMatrices(A,B):
+    "add two matrices, checking first that correct dimensions match"
+    if len(A) != len(B) or len(A[0]) != len(B[0]):
+        print("matrix dimensions must match for matrix addition")
+    else:
+        retMat = [[A[row][col] - B[row][col] for col in range(len(A[0]))] for row in range(len(A))]    
+        return(retMat)
+
+def Dot(S,T):
+    "return dot product of two vectors"
+    if len(S) != len(T):
+        print("for dot product, vector dimensions must match")
+    else:
+        retVal = 0
+        for j in range(len(S)):
+            retVal += S[j] * T[j]
+        return(retVal)
+        
+def MultiplyMat(mat1,mat2):
+    "multiply two matrices, checking first that correct dimensions match"
+    if len(mat1[0]) != len(mat2):
+        print("row count of first matrix must match col count of second matrix for multiplication")
+    else:
+        retMat = [[Dot(GetRow(mat1, row),GetCol(mat2, col)) for col in range(len(mat2[0]))] for row in range(len(mat1))]    
+        return(retMat)    
+    
 def swapRows(mat, row1, row2):
     #   store second row values first
     temp = GetRow(mat, row2)
@@ -82,7 +113,8 @@ def setPivotToOne(col, pivotRow):
             pivotRow[i] /= divisor
     return(pivotRow)
        
-def solveMatrix(mat, pivotStrategy):
+def solveMatrix(inMat, pivotStrategy):
+    mat = [[inMat[row][col] for col in range(len(inMat[0]))] for row in range(len(inMat))]
     if pivotStrategy != 0 and pivotStrategy != 1 and pivotStrategy != 2:
         tellUserHowToPivotStrategy()
         sys.exit(1)
@@ -101,6 +133,22 @@ def solveMatrix(mat, pivotStrategy):
                 removePivotValueFromRow(i, mat[i], mat[j])
     return(mat)
 
+def getErrorVec(originalMat, solutionMat):
+    #   get final column of solution matrix, b
+    b = [solutionMat[row][len(solutionMat[0])-1] for row in range(len(solutionMat))]
+    
+    #   get square component of original matrix, A
+    A = [row[0:len(originalMat[0])-1] for row in originalMat]
+    
+    #   get xTilde, the solution vector
+    xTilde = GetCol(solutionMat, len(solutionMat[0]) - 1)
+    
+    #   compute r
+    #   multiply step
+    retVec = [Dot(A[row],xTilde) for row in range(len(A))]
+    #   subtraction step
+    retVec = [b[i] - retVec[i] for i in range(len(b))]
+    return(retVec)
 
 ######  Initial tests
 
@@ -133,7 +181,11 @@ def testMatrix():
     print("Matrix")
     showMatrix(part2Mat)
     print("solved matrix")
-    showMatrix(solveMatrix(part2Mat, 2))
+    solved = solveMatrix(part2Mat, 2)
+    showMatrix(solved)
+    errorVec = getErrorVec(part2Mat, solved)
+    print("error vector r for solution")
+    showMatrix(errorVec)
     
 def testPivotOps():
     print("\nMatrix for part 2:")
