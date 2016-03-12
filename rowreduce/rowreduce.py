@@ -134,8 +134,13 @@ def solveMatrix(inMat, pivotStrategy):
     return(mat)
 
 def getErrorVec(originalMat, solutionMat):
+<<<<<<< HEAD
     #   get final column of original matrix, b
     b = [originalMat[row][len(originalMat[0])-1] for row in range(len(originalMat))]
+=======
+    #   get final column of solution matrix, b
+    b = [solutionMat[row][len(solutionMat[0])-1] for row in range(len(solutionMat))]
+>>>>>>> 5664194b054bf2dd4898a90b586bb870f77ec756
     
     #   get square component of original matrix, A
     A = [row[0:len(originalMat[0])-1] for row in originalMat]
@@ -180,6 +185,7 @@ def testRowOps():
 def testMatrix():
     print("Matrix")
     showMatrix(part2Mat)
+<<<<<<< HEAD
     print
     print("solved matrix with naive Gaussian elimination:")
     solved = solveMatrix(part2Mat, 0)
@@ -200,6 +206,13 @@ def testMatrix():
     showMatrix(solved)
     errorVec = getErrorVec(part2Mat, solved)
     print("error vector r for scaled pivoting")
+=======
+    print("solved matrix")
+    solved = solveMatrix(part2Mat, 2)
+    showMatrix(solved)
+    errorVec = getErrorVec(part2Mat, solved)
+    print("error vector r for solution")
+>>>>>>> 5664194b054bf2dd4898a90b586bb870f77ec756
     showMatrix(errorVec)
     
 def testPivotOps():
