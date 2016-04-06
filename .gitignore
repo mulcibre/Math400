@@ -1,0 +1,26 @@
+#temp doc files
+*.tmp
+
+#figures
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+#compiled C++
+*.exe
+*.obj
+
+#ignore benchmaker source files
+project 3/benchmaker/**/*.cpp
+
+#Matlab autosave files
+*.asv
+
+#no need to track pdf files
+*.pdf
+
+#other things to ignore
+*.pdf
+*.odt
+*.zip
