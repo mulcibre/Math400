@@ -26,6 +26,11 @@ points1 =    [[1.0, 1.0],
             [1.7, 1.7],
             [1.8, 1.8]]
 
+# test result should be 1
+threePoints = [[1.0, 1.0],
+          [2.0, 3.0],
+          [3.0, 5.0]]
+
 #   average of two rectangles is the trapezoid volume            
 def subIntVol(point1, point2):
     width = point2[0]-point1[0]
@@ -34,12 +39,46 @@ def subIntVol(point1, point2):
     return float(rect1Vol + rect2Vol) / 2
 
     #   trapezoid integration result is the sum of all subintervals
-def trapezoid(points):
+    #   hOffset determines spacing between points for each interval
+def trapezoid(points,hOffset):
     retVal = 0
-    for i in range(0, len(points) - 1):
-        retVal += subIntVol(points[i],points[i+1])
+    for i in range(0, (len(points) - 1)/hOffset):
+        retVal += subIntVol(points[i * hOffset],points[(i+1) * hOffset])
     return retVal
-    
+
+def checkTwoPow(count):
+    tableSize = 1
+    while count % 2 == 0:
+        tableSize += 1
+        count /= 2
+    if count != 1:
+        return 0
+    else:
+        return tableSize
+    #   execute Romberg integration on a n+1 points interval
+    #   nominally n should be a power of 2
+def romberg(dataSet, table):
+    pointCount = len(dataSet)-1
+    tableSize = checkTwoPow(len(dataSet)-1)
+    #   Make sure dataset conforms to size constraint
+    if tableSize == 0:
+        print "Romberg input dataset must be size n+1 where n is power of 2"
+        exit(-1)
+
+    #   populate leftmost column with trapezoidal approximation data
+    n = 0
+    for i in range(0, tableSize):
+        table[i][0] = trapezoid(dataSet, pointCount / 2 ** i)
+
+    #   Fill in remainder of table
+    for j in range(1,tableSize):
+        for i in range(j, tableSize):
+        #   grab necessary table values to compute Dj(hn)
+            leftOne = table[i][j - 1]
+            leftOneUpOne = table[i - 1][j - 1]
+            table[i][j] = leftOne + ((leftOne - leftOneUpOne) / (2 ** (2 * (j)) - 1))
+
+
 def CDF(points, xIndex, hOffset):
     rightFx = points[xIndex + hOffset][1]
     leftFx = points[xIndex - hOffset][1]
@@ -140,29 +179,35 @@ def lagrangePrime(points, xIndex):
 #trapezoidal integral
 #print trapezoid(points)
 
-hOffset = 4
-xIndex = 4
-table = [[0 for x in range(0,3)] for y in range(0,3)]
+#   Richardson Extrapolation
+#   using central difference
+def Richardson(table,points, xIndex, hOffset):
+    for n in range(0,3):
+        #   set leftmost value in row
+        table[n][0] = CDF(points, xIndex, hOffset / 2**n)
+        for j in range(1, n + 1):
+            #   grab necessary table values to compute Dj(hn)
+            leftOne = table[n][j-1]
+            leftOneUpOne = table[n-1][j-1]
+            table[n][j] = leftOne + ((leftOne - leftOneUpOne)/(2**(2*(j)) - 1))
 
-for n in range(0,3):
-    #   set leftmost value in row
-    table[n][0] = CDF(points, xIndex, hOffset / 2**n)
-    for j in range(1, n + 1):
-        #   grab necessary table values to compute Dj(hn)
-        leftOne = table[n][j-1]
-        leftOneUpOne = table[n-1][j-1]
-        table[n][j] = leftOne + ((leftOne - leftOneUpOne)/(2**(2*(j)) - 1))
+#   pre-allocate table
+table = [[0 for x in range(0, 3)] for y in range(0, 3)]
+Richardson(table,points,4,4)
 
 #   print table of values 
 print "Most accurate estimation is on the bottom right:"         
 pT(table)    
-    
+
+#   Error for Richardson Extrapolation
 print "\nThe error is: " + str(abs(table[-1][-1] - table[-1][-2]))
 
-# test result should be 1
-points = [[1.0, 1.0],
-          [2.0, 3.0],
-          [3.0, 5.0]]
+print "\nBy Lagrange Interpolation: " + str(midPointFormula(threePoints))
 
-print "\nBy Lagrange Interpolation: " + str(midPointFormula(points))
-    
+#   testing Romberg Integration table generator
+rombergTable = [[0 for x in range(0, (len(points)-1)/2)] for y in range(0, (len(points)-1)/2)]
+romberg(points, rombergTable)
+print "Romberg Integration: most accurate estimation is on the bottom right:"
+pT(rombergTable)
+#   Error for Romberg Integration
+print "\nThe error is: " + str(abs(rombergTable[-1][-1] - rombergTable[-1][-2]))

@@ -24,3 +24,6 @@ project 3/benchmaker/**/*.cpp
 *.pdf
 *.odt
 *.zip
+
+# pycharm stuff
+.idea/
