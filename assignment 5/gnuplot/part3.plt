@@ -7,7 +7,7 @@ set terminal pngcairo size 800,550 enhanced font 'Verdana,10'
 set output "a5p3output.png"
 
 #   set title, labels, key position
-set title "A graph"
+set title "Piecewise Approximation with Legendre Polynomial Basis Functions"
 set xlabel "<-- (x) -->"
 set ylabel "<-- (y) -->"
 set key top left title 'Legend' box 3
@@ -20,9 +20,9 @@ set zeroaxis
     set yr [-0.5:1.0]
 
 #   define piecewise function
-a(x) =  (x > -1.0 && x < -0.5) ? 0 : \
+a(x) =  (x >= -1.0 && x <= -0.5) ? 0 : \
         (x > -0.5 && x < 0.5) ? 0.5 : \
-        (x > 0.5 && x < 1.0) ? 0 : \
+        (x >= 0.5 && x <= 1.0) ? 0 : \
         1/0
 
 #   define coefficients
